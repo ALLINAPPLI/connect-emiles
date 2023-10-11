@@ -1,0 +1,24 @@
+.btn-connexion {
+    display: block;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #138496;
+    border-color: #138496;
+    color: #ffffff;
+    text-decoration: none;
+    transition: all ease 0.3s;
+    text-align: center;
+}
+
+.btn-connexion:hover {
+    background-color: #ffffff;
+    color: #138496;
+}
+
+.error-msg {
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #ffffff;
+}
