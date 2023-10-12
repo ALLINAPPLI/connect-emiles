@@ -52,4 +52,5 @@
     require_once CONNECT_TOPARTNERSITE_WP_DIR . 'functions/wordpress/wordpress_hooks.php';
     require_once CONNECT_TOPARTNERSITE_WP_DIR . 'functions/wordpress/wordpress_filters.php';
     require_once CONNECT_TOPARTNERSITE_WP_DIR . 'functions/wordpress/wordpress_shortcodes.php';
+    require_once CONNECT_TOPARTNERSITE_WP_DIR . 'functions/wordpress/wordpress_endpoint.php';
     require_once CONNECT_TOPARTNERSITE_WP_DIR . 'functions/utils.php';

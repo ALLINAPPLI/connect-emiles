@@ -9,10 +9,10 @@
     $url = '';
     
     $tabUrl = [
-        'user_id' => '',
+        'user_id' => $logged_userid_wp,
         'secure_id' => $secure_id,
-        'url_partenaire' => '',
-        'token_partenaire' => ''
+        'url_partenaire' => $optionUrlPartenaire,
+        'token_partenaire' => $optionTokenPartenaire
     ];
     
     foreach ($tabUrl as $key => $line) {
