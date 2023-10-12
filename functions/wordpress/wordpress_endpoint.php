@@ -2,7 +2,7 @@
 add_action('rest_api_init', function(){
    register_rest_route(
      'connect-topartnersite/v1',
-     '/connect-partnersite/token=(?P<token>[a-zA-Z0-9-]+)',
+     '/connect-partnersite/data',
      array(
         'methods' => 'GET',
         'callback' => 'connect_partnersite_return_json',
@@ -13,9 +13,19 @@ add_action('rest_api_init', function(){
 
 function connect_partnersite_return_json( $request ) {
     $uuidUser = $request['token'];
-    $user = get_users(array(
+    $userQuery = get_users(array(
       'meta_key' => 'secure_id',
       'meta_value' => $uuidUser
     ));
-    return $user;
+    
+    $userData = new WP_User( $userQuery[0]->data->ID );
+    
+    $dataUserArray = [
+        'nickname' => $userData->nickname,
+        'first_name' => $userData->first_name,
+        'last_name' => $userData->last_name,
+        'uuid' => $uuidUser
+    ];
+    
+    return $dataUserArray;
 }

@@ -8,7 +8,7 @@
     }
     
     // endpoint
-    $endpoint = get_rest_url() . 'connect-topartnersite/v1/connect-partnersite/token=[identifiant_utilisateur]';
+    $endpoint = get_rest_url() . 'connect-topartnersite/v1/connect-partnersite/data?token=[identifiant_utilisateur]';
 ?>
 <div class="wrap">
     <h1>Options de connexion site partenaire</h1>
