@@ -6,6 +6,9 @@
         update_option('url_partenaire',$urlPartenaire);
         update_option('token_partenaire',$tokenPartenaire);
     }
+    
+    // endpoint
+    $endpoint = get_rest_url() . 'connect-topartnersite/v1/connect-partnersite/token=[identifiant_utilisateur]';
 ?>
 <div class="wrap">
     <h1>Options de connexion site partenaire</h1>
@@ -32,6 +35,13 @@
                 <td>
                     <p><em>Inscrivez le token du site partenaire</em></p>
                     <input name="token_partenaire" type="text" id="token_partenaire" value="<?php echo get_option('token_partenaire') ? get_option('token_partenaire') : null; ?>" class="regular-text" required>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row"><label for="token">Endpoint</label></th>
+                <td>
+                    <p><em>Ci-dessous le endpoint du plugin</em></p>
+                    <p><strong><?php echo $endpoint; ?></strong></p>
                 </td>
             </tr>
             </tbody>
