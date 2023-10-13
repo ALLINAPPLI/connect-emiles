@@ -1,8 +1,8 @@
 <?php
 add_action('rest_api_init', function(){
    register_rest_route(
-     'connect-topartnersite/v1',
-     '/connect-partnersite/data',
+     'emiles/v1',
+     '/endpoint/data',
      array(
         'methods' => 'GET',
         'callback' => 'connect_partnersite_return_json',
