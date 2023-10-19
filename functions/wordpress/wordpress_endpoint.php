@@ -6,26 +6,56 @@ add_action('rest_api_init', function(){
      array(
         'methods' => 'GET',
         'callback' => 'connect_partnersite_return_json',
-        'permission_callback' => '__return_true',
+        'permission_callback' => function( \WP_REST_Request $request ) {
+            if($request->get_header('host') !== get_option('url_partenaire')) {
+                return new \WP_Error( 'url_partenaire_invalid', 'l\'url partenaire ne corresponds pas au paramétrage du plugin', array( 'status' => 403 ) );
+            }
+            return true;
+        },
+        'args' => [
+          'token' => [
+            'validate_callback' => function ( $value, \WP_REST_Request $request, $key ) {
+                if ( ! wp_is_uuid( $value ) ) {
+                    return new \WP_Error( 'uuid_invalid', 'l\'uuid de l\'utilisateur est invalide', array( 'status' => 400 ) );
+                }
+        
+                return true;
+            },
+            'sanitize_callback' => function( $value ) {
+                return trim( $value );
+            },
+          ]
+        ],
      )
    );
 });
 
 function connect_partnersite_return_json( $request ) {
     $uuidUser = $request['token'];
-    $userQuery = get_users(array(
-      'meta_key' => 'secure_id',
-      'meta_value' => $uuidUser
-    ));
+    if(!empty($uuidUser)) {
+        $userQuery = get_users(array(
+          'meta_key' => 'secure_id',
+          'meta_value' => $uuidUser
+        ));
     
-    $userData = new WP_User( $userQuery[0]->data->ID );
+        $userData = new WP_User( $userQuery[0]->data->ID );
     
-    $dataUserArray = [
-        'nickname' => $userData->nickname,
-        'first_name' => $userData->first_name,
-        'last_name' => $userData->last_name,
-        'uuid' => $uuidUser
-    ];
+        $responseCustomEndpoint = [
+          'nickname' => $userData->nickname,
+          'first_name' => $userData->first_name,
+          'last_name' => $userData->last_name,
+          'uuid' => $uuidUser
+        ];
+    } else {
+        return new WP_Error( 'empty_token', esc_html__( 'Token vide' ), array( 'status' => 403 ) );
+    }
     
-    return $dataUserArray;
+    return new \WP_REST_Response(
+      [
+        'code' => 'success',
+        'message' => 'Connexion réussie',
+        'data' => $responseCustomEndpoint
+        ],
+      200
+    );
 }
