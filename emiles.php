@@ -33,7 +33,7 @@
             add_user_meta( $user->ID, 'secure_id', $uuid, false );
         }
         
-        add_option('ndd_partenaire');
+        add_option('url_partenaire');
         add_option('token_partenaire');
     }
     register_activation_hook( __FILE__, 'create_usermeta_activate_plugin' );
@@ -44,7 +44,7 @@
             delete_user_meta($user->ID,'secure_id');
         }
     
-        delete_option('ndd_partenaire');
+        delete_option('url_partenaire');
         delete_option('token_partenaire');
     }
     register_deactivation_hook( __FILE__, 'delete_usermeta_deactivate' );
