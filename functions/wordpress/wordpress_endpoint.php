@@ -49,12 +49,5 @@ function connect_partnersite_return_json( $request ) {
         return new WP_Error( 'empty_token', esc_html__( 'Token vide' ), array( 'status' => 403 ) );
     }
     
-    return new \WP_REST_Response(
-      [
-        'code' => 'success',
-        'message' => 'Success',
-        'data' => $responseCustomEndpoint
-        ],
-      200
-    );
+    return $responseCustomEndpoint;
 }
