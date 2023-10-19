@@ -42,8 +42,9 @@ function connect_partnersite_return_json( $request ) {
     
         $responseCustomEndpoint = [
           'nickname' => $userData->nickname,
-          'first_name' => $userData->first_name,
-          'last_name' => $userData->last_name,
+          'firstname' => $userData->first_name,
+          'lastname' => $userData->last_name,
+          'email' => $userData->user_email,
           'uuid' => $uuidUser
         ];
     } else {
