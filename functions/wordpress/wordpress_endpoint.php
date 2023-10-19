@@ -41,11 +41,9 @@ function connect_partnersite_return_json( $request ) {
         $userData = new WP_User( $userQuery[0]->data->ID );
     
         $responseCustomEndpoint = [
-          'nickname' => $userData->nickname,
           'firstname' => $userData->first_name,
           'lastname' => $userData->last_name,
           'email' => $userData->user_email,
-          'uuid' => $uuidUser
         ];
     } else {
         return new WP_Error( 'empty_token', esc_html__( 'Token vide' ), array( 'status' => 403 ) );
@@ -54,7 +52,7 @@ function connect_partnersite_return_json( $request ) {
     return new \WP_REST_Response(
       [
         'code' => 'success',
-        'message' => 'Connexion réussie',
+        'message' => 'Success',
         'data' => $responseCustomEndpoint
         ],
       200
