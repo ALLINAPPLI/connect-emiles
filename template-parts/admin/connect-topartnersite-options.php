@@ -8,7 +8,7 @@
     }
     
     // endpoint
-    $endpoint = 'https://' . get_option('url_partenaire') . '/wp-json/emiles/v1/endpoint/data?token=[identifiant_utilisateur]';
+    $endpoint = get_rest_url() . 'emiles/v1/endpoint/data?token=[identifiant_utilisateur]';
 ?>
 <div class="wrap">
     <h1>Options de connexion site partenaire</h1>
