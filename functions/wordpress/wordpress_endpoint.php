@@ -6,7 +6,7 @@ add_action('rest_api_init', function(){
      array(
         'methods' => 'GET',
         'callback' => 'connect_partnersite_return_json',
-        'permission_callback' => function( \WP_REST_Request $request ) {
+        /*'permission_callback' => function( \WP_REST_Request $request ) {
             if($request->get_header('host') !== get_option('url_partenaire')) {
                 return new \WP_Error(
                   'url_partenaire_invalid',
@@ -16,7 +16,7 @@ add_action('rest_api_init', function(){
                 
             }
             return true;
-        },
+        },*/
         'args' => [
           'token' => [
             /*'validate_callback' => function ( $value, \WP_REST_Request $request, $key ) {
