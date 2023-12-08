@@ -15,7 +15,7 @@
     
     <?php if (isset($_POST) && !empty($_POST)) : ?>
         <div class="notice notice-success">
-            <p>Les options sont correctement enregistrées !!</p>
+            <p>Les options sont correctement enregistrées !</p>
         </div>
     <?php endif; ?>
     
