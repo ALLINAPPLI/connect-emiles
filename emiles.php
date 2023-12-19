@@ -44,8 +44,8 @@
             delete_user_meta($user->ID,'secure_id');
         }
     
-        delete_option('url_partenaire');
-        delete_option('token_partenaire');
+        //delete_option('url_partenaire');
+        //delete_option('token_partenaire');
     }
     register_deactivation_hook( __FILE__, 'delete_usermeta_deactivate' );
     
