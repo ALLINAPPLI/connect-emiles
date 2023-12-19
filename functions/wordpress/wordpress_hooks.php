@@ -47,8 +47,6 @@
      * @param $user_id
      */
     add_action( 'user_register', function($user_id){
-        if($_POST['action'] == 'createuser') {
-            $uuid = wp_generate_uuid4();
-            add_user_meta( $user_id, 'secure_id', $uuid, false );
-        }
+        $uuid = wp_generate_uuid4();
+        add_user_meta( $user_id, 'secure_id', $uuid, false );
     }, 10, 1 );
