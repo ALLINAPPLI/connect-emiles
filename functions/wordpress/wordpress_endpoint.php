@@ -33,24 +33,16 @@
         ],
       ]);
   
-    register_rest_route('emiles/v1', '/endpoint/alpha', [
+    register_rest_route('euralpha/v1', '/endpoint/data', [
       'methods'           => 'POST',
       'callback'          => 'connect_partnersite_alpha_return_json',
-      'permission_callback' => function( \WP_REST_Request $request ) {
-        //var_dump($request->get_header('x_forwarded_for'));
-        if($request->get_header('x_forwarded_for') !== '::1') {
-          return new \WP_Error(
-            'ip_invalide',
-            'l\'adresse ip est invalide !',
-            array( 'status' => 403 )
-          );
-        
-        }
-        return true;
-      },
-      'args' => [
-      
-      ],
+      'permission_callback' => '__return_true',
+    ]);
+  
+    register_rest_route('airalpha/v1', '/endpoint/data', [
+      'methods'           => 'POST',
+      'callback'          => 'connect_partnersite_alpha_return_json',
+      'permission_callback' => '__return_true',
     ]);
   });
   
@@ -83,9 +75,52 @@
   }
   
   function connect_partnersite_alpha_return_json($request) {
-    //var_dump($request);
-    $responseCustomEndpointAlpha = [
-      'reponse' => 'OK'
+    $parameters = $request->get_json_params();
+    $url = $request->get_header('host');
+    $blog_id = get_blog_id_from_url( $url );
+    $userData = [
+      'first_name' => $parameters['firstname'],
+      'last_name'  => $parameters['lastname'],
+      'user_email' => $parameters['email'],
+      'user_login' => $parameters['email']
     ];
+    
+    $responseCustomEndpointAlpha = [];
+  
+    $email = $parameters['email'];
+    $exists = email_exists( $email );
+    if ( $exists ) {
+      $responseCustomEndpointAlpha = [
+        'reponse' => 'Utilisateur présent en bdd'
+      ];
+  
+      /*wp_redirect( 'https://stardeuche.fr/' );
+      exit();*/
+      
+    } else {
+    
+      $user_id = wp_insert_user( $userData );
+    
+      if ( ! is_wp_error( $user_id ) ) {
+        $uuid = wp_generate_uuid4();
+        add_user_meta( $user_id, 'secure_id', $uuid, false );
+        
+        // add user in blog site of multisite
+        add_user_to_blog($blog_id,$user_id,'subscriber');
+        
+        $responseCustomEndpointAlpha = [
+          'reponse' => 'Utilisateur créé en bdd ' . $user_id
+        ];
+  
+        /*wp_redirect( 'https://dewy.fr/' );
+        exit();*/
+        
+      } else {
+        $responseCustomEndpointAlpha = [
+          'reponse' => 'problème lors de la création en bdd de l\'utilisateur'
+        ];
+      }
+    }
+    
     return $responseCustomEndpointAlpha;
   }
