@@ -36,13 +36,16 @@
     register_rest_route('euralpha/v1', '/endpoint/data', [
       'methods'           => 'POST',
       'callback'          => 'connect_partnersite_alpha_return_json',
-      'permission_callback' => '__return_true',
+      //'permission_callback' => '__return_true',
+      'permission_callback' => 'check_specific_ip_for_treatment_alpha'
     ]);
     
     register_rest_route('airalpha/v1', '/endpoint/data', [
       'methods'           => 'POST',
       'callback'          => 'connect_partnersite_alpha_return_json',
-      'permission_callback' => '__return_true',
+      //'permission_callback' => '__return_true',
+      'permission_callback' => 'check_specific_ip_for_treatment_alpha'
+    
     ]);
   });
   
@@ -72,6 +75,23 @@
     }
     
     return $responseCustomEndpoint;
+  }
+  
+  function check_specific_ip_for_treatment_alpha() {
+    /**
+     * Restrict endpoint to allowed IPs (white listing approach)
+     */
+    $allowed_ips = array(
+      '127.0.0.1', // environnement local
+      '88.170.160.8', // adresse IP dev Saint Brieuc
+      '2a01:e0a:aa8:210:e57c:b4e4:8889:7389' // adresse IP Insomnia
+    );
+    $request_server = $_SERVER['REMOTE_ADDR'];
+    
+    if( ! in_array( $request_server, $allowed_ips ) )
+      return new WP_Error( 'rest_forbidden', esc_html__( 'Acces refuse pour votre adresse IP.'), array( 'status' => 401 ) );
+    
+    return true;
   }
   
   function connect_partnersite_alpha_return_json($request) {
