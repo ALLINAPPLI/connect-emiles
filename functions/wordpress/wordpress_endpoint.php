@@ -2,43 +2,43 @@
   
   add_action('rest_api_init', function () {
     register_rest_route('emiles/v1', '/endpoint/data', [
-        'methods'           => 'GET',
-        'callback'          => 'connect_partnersite_return_json',
-        /*'permission_callback' => function( \WP_REST_Request $request ) {
-            if($request->get_header('host') !== get_option('url_partenaire')) {
-                return new \WP_Error(
-                  'url_partenaire_invalid',
-                  'l\'url partenaire ne corresponds pas au paramétrage du plugin',
-                  array( 'status' => 403 )
-                );
-                
-            }
-            return true;
-        },*/ 'args' => [
-          'token' => [
-            /*'validate_callback' => function ( $value, \WP_REST_Request $request, $key ) {
-                if ( ! wp_is_uuid( $value ) ) {
-                    return new \WP_Error(
-                      'uuid_invalid',
-                      'l\'uuid de l\'utilisateur est invalide',
-                      array( 'status' => 400 )
-                    );
-                }
-        
-                return true;
-            },*/ 'sanitize_callback' => function ($value) {
-              return trim($value);
-            },
-          ],
+      'methods'           => 'GET',
+      'callback'          => 'connect_partnersite_return_json',
+      /*'permission_callback' => function( \WP_REST_Request $request ) {
+          if($request->get_header('host') !== get_option('url_partenaire')) {
+              return new \WP_Error(
+                'url_partenaire_invalid',
+                'l\'url partenaire ne corresponds pas au paramétrage du plugin',
+                array( 'status' => 403 )
+              );
+              
+          }
+          return true;
+      },*/ 'args' => [
+        'token' => [
+          /*'validate_callback' => function ( $value, \WP_REST_Request $request, $key ) {
+              if ( ! wp_is_uuid( $value ) ) {
+                  return new \WP_Error(
+                    'uuid_invalid',
+                    'l\'uuid de l\'utilisateur est invalide',
+                    array( 'status' => 400 )
+                  );
+              }
+      
+              return true;
+          },*/ 'sanitize_callback' => function ($value) {
+            return trim($value);
+          },
         ],
-      ]);
-  
+      ],
+    ]);
+    
     register_rest_route('euralpha/v1', '/endpoint/data', [
       'methods'           => 'POST',
       'callback'          => 'connect_partnersite_alpha_return_json',
       'permission_callback' => '__return_true',
     ]);
-  
+    
     register_rest_route('airalpha/v1', '/endpoint/data', [
       'methods'           => 'POST',
       'callback'          => 'connect_partnersite_alpha_return_json',
@@ -86,21 +86,22 @@
     ];
     
     $responseCustomEndpointAlpha = [];
-  
+    
     $email = $parameters['email'];
     $exists = email_exists( $email );
-    if ( $exists ) {
+    if ( $exists && filter_var($email,FILTER_VALIDATE_EMAIL)) {
       $responseCustomEndpointAlpha = [
-        'reponse' => 'Utilisateur présent en bdd'
+        'reponse' => 'Utilisateur present en bdd'
       ];
-  
-      /*wp_redirect( 'https://stardeuche.fr/' );
-      exit();*/
+      
+      updateDataUser($email,$parameters);
+      
+      redirectionToSpecificUrl();
       
     } else {
-    
+      
       $user_id = wp_insert_user( $userData );
-    
+      
       if ( ! is_wp_error( $user_id ) ) {
         $uuid = wp_generate_uuid4();
         add_user_meta( $user_id, 'secure_id', $uuid, false );
@@ -109,15 +110,14 @@
         add_user_to_blog($blog_id,$user_id,'subscriber');
         
         $responseCustomEndpointAlpha = [
-          'reponse' => 'Utilisateur créé en bdd ' . $user_id
+          'reponse' => 'Utilisateur cree en bdd ' . $user_id
         ];
-  
-        /*wp_redirect( 'https://dewy.fr/' );
-        exit();*/
+        
+        redirectionToSpecificUrl();
         
       } else {
         $responseCustomEndpointAlpha = [
-          'reponse' => 'problème lors de la création en bdd de l\'utilisateur'
+          'reponse' => 'probleme lors de la creation en bdd de l\'utilisateur. Verifiez l\'email de l\'utilisateur !'
         ];
       }
     }
