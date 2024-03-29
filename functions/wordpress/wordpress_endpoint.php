@@ -34,17 +34,17 @@
     ]);
     
     register_rest_route('euralpha/v1', '/endpoint/data', [
-      'methods'           => 'POST',
-      'callback'          => 'connect_partnersite_alpha_return_json',
+      'methods'             => 'POST',
+      'callback'            => 'connect_partnersite_alpha_return_json',
       //'permission_callback' => '__return_true',
-      'permission_callback' => 'check_specific_ip_for_treatment_alpha'
+      'permission_callback' => 'check_specific_ip_for_treatment_alpha',
     ]);
     
     register_rest_route('airalpha/v1', '/endpoint/data', [
-      'methods'           => 'POST',
-      'callback'          => 'connect_partnersite_alpha_return_json',
+      'methods'             => 'POST',
+      'callback'            => 'connect_partnersite_alpha_return_json',
       //'permission_callback' => '__return_true',
-      'permission_callback' => 'check_specific_ip_for_treatment_alpha'
+      'permission_callback' => 'check_specific_ip_for_treatment_alpha',
     
     ]);
   });
@@ -77,67 +77,70 @@
     return $responseCustomEndpoint;
   }
   
-  function check_specific_ip_for_treatment_alpha() {
+  function check_specific_ip_for_treatment_alpha()
+  {
+    //var_dump($_SERVER);
     /**
      * Restrict endpoint to allowed IPs (white listing approach)
      */
-    $allowed_ips = array(
+    $allowed_ips    = [
       '127.0.0.1', // environnement local
       '88.170.160.8', // adresse IP dev Saint Brieuc
-      '2a01:e0a:aa8:210:e57c:b4e4:8889:7389' // adresse IP Insomnia
-    );
+      '2a01:e0a:aa8:210:9cae:6b23:800b:400', // adresse IP Insomnia
+    ];
     $request_server = $_SERVER['REMOTE_ADDR'];
     
-    if( ! in_array( $request_server, $allowed_ips ) )
-      return new WP_Error( 'rest_forbidden', esc_html__( 'Acces refuse pour votre adresse IP.'), array( 'status' => 401 ) );
+    if (!in_array($request_server, $allowed_ips)) {
+      return new WP_Error('rest_forbidden',
+        esc_html__('Acces refuse pour votre adresse IP.'),
+        ['status' => 401]);
+    }
     
     return true;
   }
   
-  function connect_partnersite_alpha_return_json($request) {
+  function connect_partnersite_alpha_return_json($request)
+  {
     $parameters = $request->get_json_params();
-    $url = $request->get_header('host');
-    $blog_id = get_blog_id_from_url( $url );
-    $userData = [
+    $url        = $request->get_header('host');
+    $blog_id    = get_blog_id_from_url($url);
+    $userData   = [
       'first_name' => $parameters['firstname'],
       'last_name'  => $parameters['lastname'],
       'user_email' => $parameters['email'],
-      'user_login' => $parameters['email']
+      'user_login' => $parameters['email'],
     ];
     
     $responseCustomEndpointAlpha = [];
     
-    $email = $parameters['email'];
-    $exists = email_exists( $email );
-    if ( $exists && filter_var($email,FILTER_VALIDATE_EMAIL)) {
+    $email  = $parameters['email'];
+    $exists = email_exists($email);
+    if ($exists && filter_var($email, FILTER_VALIDATE_EMAIL)) {
       $responseCustomEndpointAlpha = [
-        'reponse' => 'Utilisateur present en bdd'
+        'reponse' => 'Utilisateur present en bdd',
       ];
       
-      updateDataUser($email,$parameters);
+      updateDataUser($email, $parameters);
       
       redirectionToSpecificUrl();
-      
     } else {
+      $user_id = wp_insert_user($userData);
       
-      $user_id = wp_insert_user( $userData );
-      
-      if ( ! is_wp_error( $user_id ) ) {
+      if (!is_wp_error($user_id)) {
         $uuid = wp_generate_uuid4();
-        add_user_meta( $user_id, 'secure_id', $uuid, false );
+        add_user_meta($user_id, 'secure_id', $uuid, false);
         
         // add user in blog site of multisite
-        add_user_to_blog($blog_id,$user_id,'subscriber');
+        add_user_to_blog($blog_id, $user_id, 'subscriber');
         
         $responseCustomEndpointAlpha = [
-          'reponse' => 'Utilisateur cree en bdd ' . $user_id
+          'reponse' => 'Utilisateur cree en bdd ' . $user_id,
         ];
         
         redirectionToSpecificUrl();
-        
       } else {
         $responseCustomEndpointAlpha = [
-          'reponse' => 'probleme lors de la creation en bdd de l\'utilisateur. Verifiez l\'email de l\'utilisateur !'
+          'reponse' => 'probleme lors de la creation en bdd de l\'utilisateur. Verifiez l\'email de l\'utilisateur !',
         ];
       }
     }
