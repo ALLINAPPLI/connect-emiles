@@ -87,6 +87,8 @@
       '127.0.0.1', // environnement local
       '88.170.160.8', // adresse IP dev Saint Brieuc
       '2a01:e0a:aa8:210:9cae:6b23:800b:400', // adresse IP Insomnia
+      '89.91.7.163', // i2fc prod
+      '80.11.85.31' // i2fc test
     ];
     $request_server = $_SERVER['REMOTE_ADDR'];
     
