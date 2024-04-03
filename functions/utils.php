@@ -34,20 +34,23 @@
   }
   
   /**
-   * @return void
+   * @return \WP_REST_Response
    * fonction permettant de paramétrer une url dynamique pour une redirection vers un site spécifique
    */
-  function redirectionToSpecificUrl()
+  function redirectionToSpecificUrl($message,$blog_id,$user_id)
   {
-    /*
-     $secure_id           = get_user_meta($user_id, 'secure_id');
-     $optionUrlPartenaire   = get_option('url_partenaire');
-     $optionTokenPartenaire = get_option('token_partenaire');
-  
-     $url = 'https://' . $optionUrlPartenaire . '/?token=' . $optionTokenPartenaire . '&referal_user=' . $secure_id[0];
-     wp_redirect( $url );
-     exit();
-    */
+    $secure_id           = get_user_option('secure_id',$user_id);
+    $optionUrlPartenaire   = get_blog_option($blog_id,'url_partenaire');
+    $optionTokenPartenaire = get_blog_option($blog_id,'token_partenaire');
+    
+    $url = 'https://' . $optionUrlPartenaire . '/?token=' . $optionTokenPartenaire . '&referal_user=' . $secure_id;
+    
+    $restReponse = new WP_REST_Response(null,303,array(
+      'Location' => $url, // Redirect to success page.
+      'body_response' => $message
+    ));
+    
+    return $restReponse;
   }
   
   function updateDataUser($email,$parameters) {
